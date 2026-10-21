@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>จับผิดภาพปลา – ปลาน้ำจืดไทย | เกมการศึกษา</title>
+  <meta name="description" content="เกมจับผิดภาพปลาน้ำจืดไทย พร้อมคำอธิบายทางวิทยาศาสตร์ระดับมหาวิทยาลัย" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== SPLASH SCREEN ===== -->
+<div id="splash-screen" class="screen active">
+  <div class="splash-bg">
+    <div class="bubble" style="--s:60px;--d:0s;--x:10%"></div>
+    <div class="bubble" style="--s:40px;--d:1s;--x:25%"></div>
+    <div class="bubble" style="--s:80px;--d:2s;--x:50%"></div>
+    <div class="bubble" style="--s:30px;--d:0.5s;--x:70%"></div>
+    <div class="bubble" style="--s:55px;--d:1.5s;--x:85%"></div>
+    <div class="bubble" style="--s:45px;--d:3s;--x:40%"></div>
+    <div class="bubble" style="--s:70px;--d:2.5s;--x:60%"></div>
+    <div class="bubble" style="--s:35px;--d:4s;--x:15%"></div>
+  </div>
+  <div class="splash-content">
+    <div class="splash-logo">🐟</div>
+    <h1 class="splash-title">จับผิดภาพปลา</h1>
+    <p class="splash-subtitle">ปลาน้ำจืดไทย • เกมการศึกษา</p>
+    <p class="splash-desc">ฝึกสังเกตและเรียนรู้ชนิดปลาน้ำจืดในประเทศไทย<br>พร้อมคำอธิบายทางวิทยาศาสตร์ระดับมหาวิทยาลัย</p>
+
+    <div class="difficulty-section">
+      <p class="diff-label">เลือกระดับความยาก</p>
+      <div class="diff-buttons">
+        <button class="diff-btn active" data-diff="easy" id="btn-easy">
+          <span class="diff-icon">🐠</span>
+          <span class="diff-name">ง่าย</span>
+          <span class="diff-desc">5 ข้อผิดพลาด</span>
+        </button>
+        <button class="diff-btn" data-diff="medium" id="btn-medium">
+          <span class="diff-icon">🐡</span>
+          <span class="diff-name">ปานกลาง</span>
+          <span class="diff-desc">7 ข้อผิดพลาด</span>
+        </button>
+        <button class="diff-btn" data-diff="hard" id="btn-hard">
+          <span class="diff-icon">🦈</span>
+          <span class="diff-name">ยาก</span>
+          <span class="diff-desc">10 ข้อผิดพลาด</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-start" id="btn-start">
+      <span>🎮 เริ่มเล่นเกม</span>
+    </button>
+
+    <div class="splash-fish-preview" id="fish-preview-canvas-wrap">
+      <canvas id="preview-canvas" width="320" height="180"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div id="game-screen" class="screen">
+  <!-- Header -->
+  <header class="game-header">
+    <div class="header-left">
+      <button class="btn-icon" id="btn-home" title="กลับหน้าหลัก">🏠</button>
+      <div class="level-badge">
+        <span id="level-text">ด่าน 1/6</span>
+      </div>
+    </div>
+    <div class="header-center">
+      <div class="fish-name-header" id="fish-name-header">ปลากราย</div>
+    </div>
+    <div class="header-right">
+      <div class="score-display">
+        <span class="score-icon">⭐</span>
+        <span id="score-val">0</span>
+      </div>
+      <div class="timer-display" id="timer-display">
+        <span class="timer-icon">⏱</span>
+        <span id="timer-val">90</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+    <div class="diff-found-text">
+      พบแล้ว <span id="diff-found">0</span> / <span id="diff-total">5</span> จุด
+    </div>
+  </div>
+
+  <!-- Game Area -->
+  <div class="game-area" id="game-area">
+    <div class="canvas-panel" id="panel-left">
+      <div class="panel-label">🔍 ภาพต้นฉบับ (คลิกได้)</div>
+      <div class="canvas-wrap" id="left-wrap">
+        <canvas id="canvas-left"></canvas>
+        <div id="click-layer-left" class="click-layer"></div>
+      </div>
+    </div>
+    <div class="canvas-divider">
+      <span class="vs-badge">VS</span>
+    </div>
+    <div class="canvas-panel" id="panel-right">
+      <div class="panel-label">🎯 ค้นหาข้อผิดพลาด (คลิกได้)</div>
+      <div class="canvas-wrap" id="right-wrap">
+        <canvas id="canvas-right"></canvas>
+        <div id="click-layer" class="click-layer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fish Info Panel -->
+  <div class="info-panel" id="info-panel">
+    <button class="info-toggle" id="info-toggle">
+      📚 ข้อมูลทางวิทยาศาสตร์ <span id="info-arrow">▼</span>
+    </button>
+    <div class="info-content" id="info-content">
+      <div class="fish-info-card" id="fish-info-card"></div>
+    </div>
+  </div>
+
+  <!-- Difference Hints -->
+  <div class="hints-bar">
+    <div class="hints-inner" id="hints-inner"></div>
+  </div>
+
+  <!-- Hint Button -->
+  <div class="hint-action-bar">
+    <button class="btn-hint" id="btn-hint">
+      💡 ใช้คำใบ้ (<span id="hint-count">3</span>)
+    </button>
+    <button class="btn-skip" id="btn-skip">
+      ⏭ ข้ามด่านนี้
+    </button>
+  </div>
+</div>
+
+<!-- ===== LEVEL COMPLETE SCREEN ===== -->
+<div id="level-complete-screen" class="screen">
+  <div class="modal-overlay">
+    <div class="modal-box complete-modal">
+      <div class="modal-fish-anim" id="complete-fish-icon">🐟</div>
+      <h2 class="modal-title" id="complete-title">ด่านสำเร็จ!</h2>
+      <div class="stars-display" id="stars-display"></div>
+      <div class="complete-info">
+        <div class="info-row">
+          <span>เวลาที่ใช้</span>
+          <span id="complete-time">–</span>
+        </div>
+        <div class="info-row">
+          <span>คะแนนที่ได้</span>
+          <span id="complete-pts">+0</span>
+        </div>
+        <div class="info-row">
+          <span>โบนัส</span>
+          <span id="complete-bonus">+0</span>
+        </div>
+      </div>
+      <div class="complete-fact" id="complete-fact"></div>
+      <div class="modal-actions">
+        <button class="btn-next" id="btn-next-level">ด่านต่อไป ▶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VICTORY SCREEN ===== -->
+<div id="victory-screen" class="screen">
+  <div class="victory-bg">
+    <div id="confetti-container"></div>
+  </div>
+  <div class="victory-content">
+    <div class="victory-trophy">🏆</div>
+    <h1 class="victory-title">ยอดเยี่ยม!</h1>
+    <p class="victory-subtitle">คุณผ่านเกมครบทุกด่านแล้ว!</p>
+
+    <div class="achievement-grid" id="achievement-grid"></div>
+
+    <div class="final-score-card">
+      <div class="final-score-label">คะแนนรวม</div>
+      <div class="final-score-val" id="final-score-val">0</div>
+      <div class="final-rank" id="final-rank">–</div>
+    </div>
+
+    <div class="victory-summary" id="victory-summary"></div>
+
+    <div class="victory-actions">
+      <button class="btn-play-again" id="btn-play-again">🔄 เล่นอีกครั้ง</button>
+      <button class="btn-share" id="btn-share">📤 แชร์คะแนน</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WRONG CLICK EFFECT ===== -->
+<div class="wrong-flash" id="wrong-flash"></div>
+
+<!-- ===== FOUND POPUP ===== -->
+<div class="found-popup" id="found-popup">
+  <span id="found-popup-text">✓ พบแล้ว! +100</span>
+</div>
+
+<!-- ===== CENTER SCREEN HINT MODAL ===== -->
+<div id="hint-center-modal" class="hint-modal-backdrop" style="display: none;">
+  <div class="hint-center-card">
+    <button class="hint-close-btn" id="btn-close-hint" aria-label="ปิดคำใบ้">✕</button>
+    
+    <div class="hint-bulb-header">
+      <div class="hint-bulb-halo"></div>
+      <div class="hint-bulb-icon">💡</div>
+    </div>
+    
+    <div class="hint-pill-status" id="hint-pill-status">
+      คำใบ้ช่วยเล่น (เหลืออีก <span id="hint-remaining-num">3</span> ครั้ง)
+    </div>
+
+    <h2 class="hint-card-title" id="hint-card-title">💡 คำใบ้จุดต่าง</h2>
+
+    <div class="hint-detail-box">
+      <div class="hint-target-header">
+        <span class="hint-target-badge" id="hint-target-badge">👁 ดวงตา</span>
+        <span class="hint-location-badge" id="hint-location-badge">📍 ส่วนหัว / ฝั่งซ้าย</span>
+      </div>
+
+      <div class="hint-clue-text" id="hint-clue-text">
+        สังเกตขนาดของดวงตา ระหว่างภาพซ้ายและภาพขวา
+      </div>
+
+      <div class="hint-guide-box">
+        <div class="hint-guide-title">🎯 คำแนะนำในการสังเกต:</div>
+        <div class="hint-guide-desc" id="hint-guide-desc">
+          จุดนี้อยู่บริเวณส่วนหัว ลองเทียบดวงตาภาพต้นฉบับกับภาพที่ค้นหาว่ามีขนาดเท่ากันหรือไม่
+        </div>
+      </div>
+      
+      <div class="hint-score-note">
+        ⚡ ใช้คำใบ้: -30 คะแนน
+      </div>
+    </div>
+
+    <div class="hint-action-buttons">
+      <button class="btn-spotlight-hint" id="btn-spotlight-hint">
+        🎯 ชี้เป้าตำแหน่งบนภาพทันที!
+      </button>
+      <button class="btn-dismiss-hint" id="btn-dismiss-hint">
+        ✓ เข้าใจแล้ว จะหาดูเอง
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HINT ALERT MODAL (NOTICES) ===== -->
+<div id="hint-alert-modal" class="hint-modal-backdrop" style="display: none;">
+  <div class="hint-center-card hint-alert-card">
+    <button class="hint-close-btn" id="btn-close-hint-alert" aria-label="ปิด">✕</button>
+    <div class="hint-bulb-header">
+      <div class="hint-bulb-icon" id="hint-alert-icon">💡</div>
+    </div>
+    <h2 class="hint-card-title" id="hint-alert-title">แจ้งเตือนคำใบ้</h2>
+    <p class="hint-alert-message" id="hint-alert-message">
+      คุณใช้คำใบ้ครบ 3 ครั้งแล้วสำหรับด่านนี้!
+    </p>
+    <div class="hint-action-buttons">
+      <button class="btn-spotlight-hint" id="btn-ok-hint-alert">ตกลง เข้าใจแล้ว</button>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
