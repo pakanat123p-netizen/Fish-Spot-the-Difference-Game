@@ -36,17 +36,17 @@
         <button class="diff-btn active" data-diff="easy" id="btn-easy">
           <span class="diff-icon">🐠</span>
           <span class="diff-name">ง่าย</span>
-          <span class="diff-desc">5 ข้อผิดพลาด</span>
+          <span class="diff-desc">ครบ 5 จุด • 75 วิ • ใบ้ 2</span>
         </button>
         <button class="diff-btn" data-diff="medium" id="btn-medium">
           <span class="diff-icon">🐡</span>
           <span class="diff-name">ปานกลาง</span>
-          <span class="diff-desc">7 ข้อผิดพลาด</span>
+          <span class="diff-desc">ครบ 5 จุด • 50 วิ • ผิดหัก -2วิ</span>
         </button>
         <button class="diff-btn" data-diff="hard" id="btn-hard">
           <span class="diff-icon">🦈</span>
           <span class="diff-name">ยาก</span>
-          <span class="diff-desc">10 ข้อผิดพลาด</span>
+          <span class="diff-desc">ครบ 5 จุด • 35 วิ • ผิดหัก -3วิ</span>
         </button>
       </div>
     </div>
@@ -55,9 +55,13 @@
       <span>🎮 เริ่มเล่นเกม</span>
     </button>
 
-    <div class="splash-fish-preview" id="fish-preview-canvas-wrap">
-      <canvas id="preview-canvas" width="320" height="180"></canvas>
+    <div class="splash-sound-wrap">
+      <button class="btn-sound-splash" id="btn-sound-splash" title="เปิด/ปิดเสียงและเพลง">
+        <span id="sound-splash-icon">🔊</span>
+        <span id="sound-splash-text">ดนตรี & เสียงเอฟเฟกต์: เปิด</span>
+      </button>
     </div>
+
   </div>
 </div>
 
@@ -68,7 +72,10 @@
     <div class="header-left">
       <button class="btn-icon" id="btn-home" title="กลับหน้าหลัก">🏠</button>
       <div class="level-badge">
-        <span id="level-text">ด่าน 1/6</span>
+        <span id="level-text">ด่าน 1/9</span>
+      </div>
+      <div class="diff-badge diff-easy" id="diff-badge">
+        <span id="diff-badge-text">🐠 ง่าย</span>
       </div>
     </div>
     <div class="header-center">
@@ -83,6 +90,7 @@
         <span class="timer-icon">⏱</span>
         <span id="timer-val">90</span>
       </div>
+      <button class="btn-icon" id="btn-sound-toggle" title="เปิด/ปิดเสียงและเพลง">🔊</button>
     </div>
   </header>
 
@@ -125,10 +133,6 @@
     </div>
   </div>
 
-  <!-- Difference Hints -->
-  <div class="hints-bar">
-    <div class="hints-inner" id="hints-inner"></div>
-  </div>
 
   <!-- Hint Button -->
   <div class="hint-action-bar">
@@ -160,6 +164,10 @@
         <div class="info-row">
           <span>โบนัส</span>
           <span id="complete-bonus">+0</span>
+        </div>
+        <div class="info-row">
+          <span>ความรู้ประมง</span>
+          <span id="complete-quiz-result">✅ ถูกต้อง (+50)</span>
         </div>
       </div>
       <div class="complete-fact" id="complete-fact"></div>
@@ -268,6 +276,48 @@
     <div class="hint-action-buttons">
       <button class="btn-spotlight-hint" id="btn-ok-hint-alert">ตกลง เข้าใจแล้ว</button>
     </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ MODAL ===== -->
+<div id="quiz-modal" class="quiz-backdrop" style="display:none;">
+  <div class="quiz-card">
+    <div class="quiz-header">
+      <div class="quiz-fish-icon" id="quiz-fish-icon">🐟</div>
+      <div class="quiz-header-text">
+        <div class="quiz-label">🎓 คำถามการศึกษาด้านการประมง & ชีววิทยาปลา</div>
+        <div class="quiz-fish-name-row">
+          <span class="quiz-fish-name" id="quiz-fish-name">ปลากราย</span>
+          <span class="quiz-category-pill" id="quiz-category-pill">🐟 การประมง & การแปรรูป</span>
+        </div>
+      </div>
+      <div class="quiz-header-badges">
+        <div class="quiz-timer-pill" id="quiz-timer-pill">⏱ 20s</div>
+        <div class="quiz-score-badge" id="quiz-score-badge">+50 คะแนน</div>
+      </div>
+    </div>
+
+    <div class="quiz-progress">
+      <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
+    </div>
+
+    <div class="quiz-question-wrap">
+      <p class="quiz-question" id="quiz-question">คำถามปรากฏที่นี่</p>
+    </div>
+
+    <div class="quiz-options" id="quiz-options">
+      <!-- options injected by JS -->
+    </div>
+
+    <div class="quiz-feedback" id="quiz-feedback" style="display:none;">
+      <div class="quiz-feedback-icon" id="quiz-feedback-icon">✅</div>
+      <div class="quiz-feedback-text" id="quiz-feedback-text">ถูกต้อง!</div>
+      <div class="quiz-explanation" id="quiz-explanation"></div>
+    </div>
+
+    <button class="quiz-next-btn" id="quiz-next-btn" style="display:none;">
+      ดูผลสรุปด่านนี้ ▶
+    </button>
   </div>
 </div>
 
